@@ -1,0 +1,19 @@
+public class TwoFactorAuthenticationController : ControllerBase
+{
+    [HttpGet]
+    public ActionResult Enable()
+    {
+        User user = // TODO: fetch signed in user from a database
+        TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
+        var setupInfo =
+            twoFactor.GenerateSetupCode("myapp", user.Email, TwoFactorKey(user), false, 3);
+        ViewBag.SetupCode = setupInfo.ManualEntryKey;
+        ViewBag.BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
+        return View();
+    }
+    
+    private static string TwoFactorKey(UserDocument user)
+    {
+        return $"myverysecretkey+{user.Email}";
+    }
+}
